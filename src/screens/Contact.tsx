@@ -20,7 +20,7 @@ export default function Contact() {
       >
         <div className="p-8 border-b border-border bg-surface-dim">
            
-           <h1 className="text-4xl font-mono tracking-tighter uppercase leading-none">Contact <span className="text-accent-blue">Us</span></h1>
+           <h1 className="text-3xl md:text-4xl font-mono tracking-tighter uppercase leading-none">Contact <span className="text-accent-blue">Us</span></h1>
         </div>
 
         <div className="p-8 md:p-12 space-y-8">

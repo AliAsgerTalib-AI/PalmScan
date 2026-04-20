@@ -21,6 +21,44 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
     setUserData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const compressImage = (base64Str: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error("Canvas context failed"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        // Compress to JPEG with 0.8 quality
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        resolve(compressedBase64);
+      };
+      img.onerror = (err) => reject(err);
+    });
+  };
+
   const handlePortalChange = (portal: keyof UserData['portals'], e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setErrors(prev => ({ ...prev, [portal]: "" })); // Clear previous error
@@ -33,26 +71,40 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
         return;
       }
 
-      if (file.size > 2 * 1024 * 1024) { // 2MB Limit
-        setErrors(prev => ({ ...prev, [portal]: "Payload Overflow: 2MB Limit" }));
-        setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } })); // Clear data
+      // Allow slightly larger raw files for compression (e.g., 10MB), 
+      // but the result must still be manageable.
+      if (file.size > 10 * 1024 * 1024) { 
+        setErrors(prev => ({ ...prev, [portal]: "File Too Large (10MB MAX)" }));
+        setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } }));
         return;
       }
 
       const reader = new FileReader();
-      reader.onloadstart = () => {
-        // Could add local loading logic here if needed
-      };
-
       reader.onerror = () => {
         setErrors(prev => ({ ...prev, [portal]: "Interface Error: Read Failed" }));
       };
 
-      reader.onloadend = () => {
-        setUserData(prev => ({
-          ...prev,
-          portals: { ...prev.portals, [portal]: reader.result as string }
-        }));
+      reader.onloadend = async () => {
+        try {
+          const rawBase64 = reader.result as string;
+          const compressed = await compressImage(rawBase64);
+          
+          // Final check: Is compressed size under 2MB? (Roughly 1.33x for base64)
+          const approximateSize = (compressed.length * (3/4));
+          if (approximateSize > 2 * 1024 * 1024) {
+             setErrors(prev => ({ ...prev, [portal]: "Payload Overflow: 2MB Limit" }));
+             setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } }));
+             return;
+          }
+
+          setUserData(prev => ({
+            ...prev,
+            portals: { ...prev.portals, [portal]: compressed }
+          }));
+        } catch (err) {
+          setErrors(prev => ({ ...prev, [portal]: "Compression Fault: System Overload" }));
+          setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } }));
+        }
       };
       
       try {
@@ -151,6 +203,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                 <input 
                   type="file" 
                   accept="image/*" 
+                  capture="environment"
                   className="hidden" 
                   onChange={(e) => handlePortalChange(p.id, e)} 
                 />

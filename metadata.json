@@ -1,6 +1,6 @@
 {
   "name": "PalmScan",
   "description": "A mystical palmistry application that deciphers your destiny using ancient wisdom and digital alchemy.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": []
 }

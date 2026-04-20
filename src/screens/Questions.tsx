@@ -36,7 +36,7 @@ export default function Questions({ userData, setUserData, onNext, isAnalyzing }
       >
         <div className="p-8 border-b border-border bg-surface-dim">
            <div className="label-serif mb-2">Protocol: subject-inquiry-v4</div>
-           <h1 className="text-4xl font-mono tracking-tighter uppercase leading-none">Pose Thy <span className="text-accent-blue">Inquiry</span></h1>
+           <h1 className="text-3xl md:text-4xl font-mono tracking-tighter uppercase leading-none">Pose Thy <span className="text-accent-blue">Inquiry</span></h1>
         </div>
 
         <div className="p-8 md:p-12 space-y-12">
