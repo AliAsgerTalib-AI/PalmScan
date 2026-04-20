@@ -10,7 +10,6 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Disclaimer from "./screens/Disclaimer";
 import Sanctum from "./screens/Sanctum";
-import Questions from "./screens/Questions";
 import Result from "./screens/Result";
 import Contact from "./screens/Contact";
 
@@ -27,19 +26,12 @@ export default function App() {
       leftHand: null,
       rightPercussion: null,
       leftPercussion: null,
-    },
-    questions: {
-      foundation: '',
-      shadow: '',
-      horizon: '',
     }
   });
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
-    setCurrentScreen('questions'); // Still ask questions while analyzing or just show loading?
-    // The user flow might be: Analyze -> Questions -> Result
-    // But analysis needs images.
+    setCurrentScreen('result'); // Navigate to result screen to show loading or results
     
     try {
       const response = await fetch('/api/analyze', {
@@ -47,32 +39,17 @@ export default function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: userData.name,
-          age: userData.age,
-          sex: userData.sex,
-          images: [
-            userData.portals.rightHand,
-            userData.portals.leftHand,
-            userData.portals.rightPercussion,
-            userData.portals.leftPercussion,
-          ].filter(Boolean)
-        }),
+        body: JSON.stringify(userData),
       });
 
       if (!response.ok) throw new Error('Analysis failed');
       
       const data = await response.json();
+      const result = data.full;
       
-      // Parse the AI output into PalmReading shape
-      // This is a simplified extraction
       setAnalysisResult({
-        synthesis: data.analysis,
-        career: 'Analyzed by PalmScan AI Node',
-        harmony: 'Synchronization Level: High',
-        spirit: 'Bio-Essence Verified',
-        verifiedId: `ID-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-        rawAnalysis: data.analysis
+        ...result,
+        rawAnalysis: result.synthesis // Preserve the raw text for follow-up questions
       });
     } catch (error) {
       console.error(error);
@@ -93,19 +70,15 @@ export default function App() {
             handleAnalyze();
           }} 
         />;
-      case 'questions':
-        return <Questions 
-          userData={userData} 
-          setUserData={setUserData} 
-          onNext={() => setCurrentScreen('result')} 
-          isAnalyzing={isAnalyzing}
-        />;
       case 'result':
-        return <Result userData={userData} analysisResult={analysisResult} />;
+        return <Result 
+          userData={userData} 
+          analysisResult={analysisResult} 
+        />;
       case 'contact':
         return <Contact />;
       default:
-        return <Sanctum userData={userData} setUserData={setUserData} onNext={() => setCurrentScreen('questions')} />;
+        return <Sanctum userData={userData} setUserData={setUserData} onNext={() => handleAnalyze()} />;
     }
   };
 

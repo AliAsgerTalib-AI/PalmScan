@@ -5,17 +5,18 @@
 
 import { useState, Dispatch, SetStateAction, ChangeEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Sparkles, Hand, ArrowRight, Scan, CloudUpload, Focus, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
+import { Sparkles, Hand, ArrowRight, Scan, CloudUpload, Focus, CheckCircle2, AlertCircle, XCircle, Loader2 } from "lucide-react";
 import { UserData, Screen } from "../types";
 
 interface SanctumProps {
   userData: UserData;
   setUserData: Dispatch<SetStateAction<UserData>>;
-  onNext: (screen: Screen) => void;
+  onNext: (screen?: Screen) => void;
 }
 
 export default function Sanctum({ userData, setUserData, onNext }: SanctumProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [processing, setProcessing] = useState<Record<string, boolean>>({});
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setUserData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -62,26 +63,31 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
   const handlePortalChange = (portal: keyof UserData['portals'], e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setErrors(prev => ({ ...prev, [portal]: "" })); // Clear previous error
-
+    
     if (file) {
+      setProcessing(prev => ({ ...prev, [portal]: true }));
+
       // Basic Validation
       if (!file.type.startsWith('image/')) {
-        setErrors(prev => ({ ...prev, [portal]: "Invalid FileType: Image Required" }));
+        setErrors(prev => ({ ...prev, [portal]: "Format incompatible with astral visualization (Images only)" }));
         setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } })); // Clear data
+        setProcessing(prev => ({ ...prev, [portal]: false }));
         return;
       }
 
       // Allow slightly larger raw files for compression (e.g., 10MB), 
       // but the result must still be manageable.
       if (file.size > 10 * 1024 * 1024) { 
-        setErrors(prev => ({ ...prev, [portal]: "File Too Large (10MB MAX)" }));
+        setErrors(prev => ({ ...prev, [portal]: "Source file too bulky for mystical transference (10MB limit)" }));
         setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } }));
+        setProcessing(prev => ({ ...prev, [portal]: false }));
         return;
       }
 
       const reader = new FileReader();
       reader.onerror = () => {
-        setErrors(prev => ({ ...prev, [portal]: "Interface Error: Read Failed" }));
+        setErrors(prev => ({ ...prev, [portal]: "Spectral interference during memory extraction" }));
+        setProcessing(prev => ({ ...prev, [portal]: false }));
       };
 
       reader.onloadend = async () => {
@@ -92,8 +98,9 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
           // Final check: Is compressed size under 2MB? (Roughly 1.33x for base64)
           const approximateSize = (compressed.length * (3/4));
           if (approximateSize > 2 * 1024 * 1024) {
-             setErrors(prev => ({ ...prev, [portal]: "Payload Overflow: 2MB Limit" }));
+             setErrors(prev => ({ ...prev, [portal]: "Image data too dense for alchemical processing (2MB limit)" }));
              setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } }));
+             setProcessing(prev => ({ ...prev, [portal]: false }));
              return;
           }
 
@@ -102,15 +109,18 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
             portals: { ...prev.portals, [portal]: compressed }
           }));
         } catch (err) {
-          setErrors(prev => ({ ...prev, [portal]: "Compression Fault: System Overload" }));
+          setErrors(prev => ({ ...prev, [portal]: "Alchemical synthesis failed: System overload" }));
           setUserData(prev => ({ ...prev, portals: { ...prev.portals, [portal]: "" } }));
+        } finally {
+          setProcessing(prev => ({ ...prev, [portal]: false }));
         }
       };
       
       try {
         reader.readAsDataURL(file);
       } catch (err) {
-        setErrors(prev => ({ ...prev, [portal]: "System Fault: Execution Denied" }));
+        setErrors(prev => ({ ...prev, [portal]: "Spectral interference detected: Execution denied" }));
+        setProcessing(prev => ({ ...prev, [portal]: false }));
       }
     }
   };
@@ -121,7 +131,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
 
   const handleAnalyze = async () => {
     if (!isComplete) return;
-    onNext('questions'); 
+    onNext('result'); 
   };
 
   return (
@@ -250,9 +260,17 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                     initial={false}
                     animate={userData.portals[p.id] ? { scale: [1, 1.2, 1] } : {}}
                     className={`mb-4 transition-all duration-500 transform 
-                      ${errors[p.id] ? 'text-accent-red' : userData.portals[p.id] ? 'text-accent-green' : 'text-primary opacity-40 group-hover:opacity-80 group-hover:scale-110'}`}
+                      ${errors[p.id] ? 'text-accent-red' : processing[p.id] ? 'text-primary' : userData.portals[p.id] ? 'text-accent-green' : 'text-primary opacity-40 group-hover:opacity-80 group-hover:scale-110'}`}
                   >
-                    {errors[p.id] ? <AlertCircle className="w-12 h-12 animate-bounce" /> : userData.portals[p.id] ? <CheckCircle2 className="w-12 h-12 shadow-[0_0_20px_rgba(34,197,94,0.4)]" /> : p.icon}
+                    {errors[p.id] ? (
+                      <AlertCircle className="w-12 h-12 animate-bounce" />
+                    ) : processing[p.id] ? (
+                      <Loader2 className="w-12 h-12 animate-spin" />
+                    ) : userData.portals[p.id] ? (
+                      <CheckCircle2 className="w-12 h-12 shadow-[0_0_20px_rgba(34,197,94,0.4)]" />
+                    ) : (
+                      p.icon
+                    )}
                   </motion.div>
                   
                   <h3 className="text-sm font-mono font-bold uppercase mb-1">{p.label}</h3>
@@ -270,6 +288,17 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         <XCircle className="w-3 h-3" />
                         <span>{errors[p.id]}</span>
                       </motion.div>
+                    ) : processing[p.id] ? (
+                      <motion.div 
+                        key="processing"
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        className="text-[10px] font-mono font-bold uppercase tracking-tighter mt-4 py-1 px-3 border border-primary text-primary bg-primary/10 flex items-center gap-2"
+                      >
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <span>Processing...</span>
+                      </motion.div>
                     ) : (
                       <motion.div 
                         key="status"
@@ -283,7 +312,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         {userData.portals[p.id] ? (
                           <>
                             <Sparkles className="w-3 h-3 animate-pulse" />
-                            <span>Bio-Data Synced</span>
+                            <span>READY FOR ANALYSIS</span>
                           </>
                         ) : (
                           <>

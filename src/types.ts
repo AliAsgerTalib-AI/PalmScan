@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type Screen = 'disclaimer' | 'setup' | 'questions' | 'result' | 'contact';
+export type Screen = 'disclaimer' | 'setup' | 'result' | 'contact';
 
 export interface UserData {
   name: string;
@@ -14,11 +14,6 @@ export interface UserData {
     leftHand: string | null;
     rightPercussion: string | null;
     leftPercussion: string | null;
-  };
-  questions: {
-    foundation: string;
-    shadow: string;
-    horizon: string;
   };
 }
 

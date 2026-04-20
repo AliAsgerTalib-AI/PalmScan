@@ -108,16 +108,16 @@ export default function Result({ userData, analysisResult }: ResultProps) {
           <div className="label-serif">Recursive Node Analysis</div>
           <div className="space-y-16">
             {[
-              { id: 'PATH_01', type: 'Foundation', question: userData.questions.foundation, answer: reading.career },
-              { id: 'PATH_02', type: 'Shadow', question: userData.questions.shadow, answer: reading.harmony },
-              { id: 'PATH_03', type: 'Horizon', question: userData.questions.horizon, answer: reading.spirit }
+              { id: 'PATH_01', type: 'Foundation', answer: reading.career },
+              { id: 'PATH_02', type: 'Shadow', answer: reading.harmony },
+              { id: 'PATH_03', type: 'Horizon', answer: reading.spirit }
             ].map((item, idx) => (
               <div key={idx} className="relative pl-16 group">
                 <div className="absolute left-0 top-0 text-[10px] font-mono opacity-40 font-bold group-hover:opacity-100 transition-opacity">
                   {item.id}<br/>{item.type.toUpperCase()}
                 </div>
                 <div className="space-y-4">
-                   <h4 className="text-lg font-mono font-bold tracking-tight uppercase">Inquiry Matrix: "{item.question}"</h4>
+                   <h4 className="text-lg font-mono font-bold tracking-tight uppercase">Analysis Matrix: {item.type.toUpperCase()}</h4>
                    <div className="p-6 bg-surface-dim border-l-4 border-primary italic font-serif text-lg leading-relaxed">
                       "{item.answer}"
                    </div>
@@ -161,24 +161,6 @@ export default function Result({ userData, analysisResult }: ResultProps) {
            </div>
         </div>
       </div>
-
-      {/* Further Exploration */}
-      <section className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-0 border border-border bg-surface-bright">
-         <div className="p-8 border-r border-border md:col-span-2">
-            <div className="label-serif mb-4">Nexus Extension</div>
-            <h3 className="text-3xl font-mono tracking-tighter uppercase mb-6 leading-none">Iteration Continues</h3>
-            <p className="font-sans text-sm text-on-surface opacity-70 mb-8 leading-relaxed">
-              Biological palmistry is a dynamic process. Your node trajectories adapt to environmental stimuli and conscious decision loops. The Nexus remains at your disposal for further mapping.
-            </p>
-            <div className="flex gap-8 font-mono text-[10px] font-bold uppercase tracking-widest text-accent-blue underline">
-               <span className="cursor-pointer hover:text-primary transition-colors">Documentation</span>
-               <span className="cursor-pointer hover:text-primary transition-colors">Ancestral Data</span>
-            </div>
-         </div>
-         <div className="p-8 bg-surface-dim flex items-center justify-center overflow-hidden grayscale opacity-30">
-            <BookOpen className="w-32 h-32 text-primary" />
-         </div>
-      </section>
     </div>
   );
 }

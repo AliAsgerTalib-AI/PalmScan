@@ -29,7 +29,7 @@ export default function Header({ onNavigate, currentScreen }: HeaderProps) {
         <div className="flex space-x-4 text-[10px] uppercase font-bold tracking-widest text-on-surface">
           <span 
             onClick={() => onNavigate('setup')}
-            className={`cursor-pointer transition-opacity ${currentScreen === 'setup' || currentScreen === 'questions' ? 'opacity-100 underline underline-offset-4' : 'opacity-40 hover:opacity-100'}`}
+            className={`cursor-pointer transition-opacity ${currentScreen === 'setup' ? 'opacity-100 underline underline-offset-4' : 'opacity-40 hover:opacity-100'}`}
           >
             Sanctum
           </span>
