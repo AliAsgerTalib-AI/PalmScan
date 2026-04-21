@@ -142,22 +142,32 @@ export default function Result({ userData, analysisResult }: ResultProps) {
       </motion.div>
 
       {/* Simplified, Unified Analysis "Textbox" */}
-      <div id="print-area" className="border border-border bg-surface-bright shadow-2xl overflow-hidden print:shadow-none print:border-none print:m-0 print:p-0">
+      <div id="print-area" className="relative border border-border bg-surface-bright overflow-hidden print:shadow-none print:border-none print:m-0 print:p-0">
+        {/* Decorative Corner Ornaments */}
+        <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary/20 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-primary/20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-primary/20 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary/20 pointer-events-none" />
+
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-8 md:p-20 selection:bg-accent-orange/10"
+          className="p-8 md:p-20 selection:bg-accent-orange"
         >
           {/* Spiritual Matrix Visualization */}
           <div className="mb-20 flex flex-col items-center">
-            <div className="label-serif mb-8 text-center">Ritual Vector Analysis</div>
-            <div className="w-full h-[300px] md:h-[400px]">
+            <div className="flex flex-col items-center mb-8">
+              <Hexagon className="w-12 h-12 text-accent-orange mb-4 opacity-20" />
+              <div className="label-serif text-center uppercase tracking-[0.3em]">Ritual Vector Analysis</div>
+            </div>
+            
+            <div className="w-full h-[300px] md:h-[400px] relative">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                  <PolarGrid stroke="#14141410" />
+                  <PolarGrid stroke="#f0f0f0" />
                   <PolarAngleAxis 
                     dataKey="subject" 
-                    tick={{ fill: '#14141480', fontSize: 10, fontWeight: 600, fontFamily: 'monospace' }} 
+                    tick={{ fill: '#666666', fontSize: 10, fontWeight: 600, fontFamily: 'monospace' }} 
                   />
                   <PolarRadiusAxis 
                     angle={30} 
@@ -174,32 +184,71 @@ export default function Result({ userData, analysisResult }: ResultProps) {
                   />
                 </RadarChart>
               </ResponsiveContainer>
+              {/* Subtle watermark overlay for the chart */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+                <Hexagon className="w-64 h-64 text-primary rotate-45" />
+              </div>
             </div>
-            <div className="flex gap-8 mt-8 flex-wrap justify-center">
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mt-12 w-full max-w-2xl">
               {chartData.map((d) => (
-                <div key={d.subject} className="flex flex-col items-center">
-                  <div className="text-[10px] font-mono text-on-surface/40 uppercase mb-1">{d.subject}</div>
-                  <div className="text-xl font-mono tracking-tighter font-bold">{d.value}</div>
+                <div key={d.subject} className="flex flex-col items-center p-4 border border-border/5 bg-surface-dim/30">
+                  <div className="text-[10px] font-mono text-[#14141466] uppercase mb-2 tracking-widest">{d.subject}</div>
+                  <div className="text-3xl font-mono tracking-tighter font-bold">{d.value}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="prose prose-neutral max-w-none 
-            prose-headings:font-mono prose-headings:tracking-widest prose-headings:uppercase prose-headings:text-on-surface/80
-            prose-h2:text-2xl prose-h2:border-b prose-h2:border-on-surface/10 prose-h2:pb-6 prose-h2:mt-16 prose-h2:mb-8
-            prose-p:text-xl prose-p:font-serif prose-p:italic prose-p:leading-relaxed prose-p:text-on-surface
-            prose-strong:text-accent-orange prose-strong:font-bold prose-strong:px-1 prose-strong:bg-accent-orange/5
-            prose-ul:list-square prose-li:font-serif prose-li:text-lg
-            prose-blockquote:border-l-4 prose-blockquote:border-accent-orange prose-blockquote:bg-surface-dim prose-blockquote:p-6 prose-blockquote:italic
-          ">
-            {/* Unified Analysis Body with Markdown support */}
-            <div className="markdown-body space-y-6">
-              {reading.fullReading ? (
-                <ReactMarkdown>{reading.fullReading}</ReactMarkdown>
-              ) : (
-                <p className="text-on-surface mb-6">{reading.synthesis}</p>
-              )}
+          <div className="border-t border-border/10 pt-20">
+            <div className="flex justify-between items-center mb-16 px-4">
+              <div className="h-px bg-border/20 flex-grow mr-8" />
+              <div className="label-serif">Technical Narrative</div>
+              <div className="h-px bg-border/20 flex-grow ml-8" />
+            </div>
+
+            <div className="prose prose-neutral max-w-none 
+              prose-headings:font-mono prose-headings:tracking-widest prose-headings:uppercase prose-headings:text-[#141414cc]
+              prose-h2:text-2xl prose-h2:border-b prose-h2:border-[#1414141a] prose-h2:pb-6 prose-h2:mt-16 prose-h2:mb-8
+              prose-p:text-xl prose-p:font-serif prose-p:italic prose-p:leading-relaxed prose-p:text-on-surface
+              prose-strong:text-accent-orange prose-strong:font-bold prose-strong:px-1 prose-strong:bg-[#FB923C0D]
+              prose-ul:list-square prose-li:font-serif prose-li:text-lg
+              prose-blockquote:border-l-4 prose-blockquote:border-accent-orange prose-blockquote:bg-[#FAFAFA] prose-blockquote:p-6 prose-blockquote:italic
+            ">
+              {/* Unified Analysis Body with Markdown support */}
+              <div className="markdown-body space-y-8 px-4">
+                {reading.fullReading ? (
+                  <ReactMarkdown>{reading.fullReading}</ReactMarkdown>
+                ) : (
+                  <p className="text-on-surface mb-6 leading-relaxed">{reading.synthesis}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Ritual Conclusion / Signature Section */}
+            <div className="mt-32 pt-20 border-t border-border/5 flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+              <div className="space-y-6">
+                <div className="label-serif">Diagnostic Timestamp</div>
+                <div className="text-sm font-mono opacity-60">
+                  {new Date().toISOString().replace('T', ' ').split('.')[0]} GMT
+                </div>
+                <div className="text-[10px] font-mono text-accent-green leading-tight max-w-xs">
+                  This report is a technical synthesis of visible hand geometry and skin texture patterns. Verified under Shastra Protocol v3.
+                </div>
+              </div>
+
+              <div className="flex flex-col items-end">
+                <div className="w-48 h-12 border-b border-primary/40 relative mb-4">
+                  <div className="absolute bottom-2 left-0 font-serif italic text-2xl text-primary/30 select-none">Samudrika Master</div>
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: 1.5, delay: 1 }}
+                    className="absolute -bottom-[2px] left-0 h-1 bg-accent-orange/40"
+                  />
+                </div>
+                <div className="label-serif">Ritual Signature Authenticated</div>
+              </div>
             </div>
           </div>
         </motion.div>

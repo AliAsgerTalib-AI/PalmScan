@@ -83,14 +83,14 @@ User Profile:
     - Name: ${userData.name}
     - Age: ${userData.age}
     - Essence (Sex): ${userData.sex}
-
+    
     /**
     * Structure your reading with the following aspects:
-    * - fullReading: The complete, detailed technical analysis as a single cohesive text. Use Markdown headings (## Geometry, ## The Major Lines, etc.) and bold text for key terms. This is the master formatted report.
-    * - Synthesis: A 3-sentence high-level summary of the overall direction.
-    * - Career: Summary of professional stability.
-    * - Harmony: Summary of relationship dynamics.
-    * - Spirit: Summary of hidden talents.
+    * - fullReading: The complete, detailed technical analysis as a single cohesive text. Use Markdown headings (## Geometry, ## The Shadow, ## Exit Diagnostics, etc.) and bold text for key terms. This is the master formatted report.
+    * - synthesis: A 3-sentence high-level summary of the overall direction.
+    * - career: Summary of professional stability.
+    * - harmony: Summary of relationship dynamics.
+    * - spirit: Summary of hidden talents.
     * - scores: A numeric evaluation of each pillar (0-100) based on the markings' strength/clarity.
     *   - synthesis: Overall life force intensity.
     *   - career: Professional ambition and stability.
@@ -98,7 +98,7 @@ User Profile:
     *   - spirit: Intuitive or creative potential.
     * - verifiedId: A unique mystical code.
 
-    * Format the response strictly as JSON matches the PalmReading interface.
+    * Format the response strictly as JSON matching the PalmReading interface.
     */
   `;
 }
