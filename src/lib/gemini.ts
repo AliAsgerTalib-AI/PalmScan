@@ -59,6 +59,7 @@ STRICT DIRECTIVES:
    - Intellectual & Spiritual Evolution (The Head/Jupiter Vector)
 6. FUTURE LIFE STORY (100 WORDS): Based on the projections, provide a 100-word "Future Narrative" describing the likely culmination of the subject's path.
 7. REMEDIATION RECOMMENDATIONS: Provide a specific section titled "Ritual Remediation" recommending exactly what the person can do (actions, habits, environmental shifts) to improve on the weaknesses identified in their readings.
+8. SHADOW & EXIT DIAGNOSTICS: Provide a specific, highly detailed section on the likely conclusion of the subject's physical existence. Based on the termination of the Life Line (Ayush Rekha) and surrounding percussion marks, specify HOW the life force will likely dissipate (cause/manner), approximately WHEN (timeframe/age), and the environmental context (WHERE/nature of the end). Use the "Brutal Truth" tone.
 
 Analysis Modules:
 Phase 1: Narrative Biography (100 words)
@@ -68,7 +69,8 @@ Phase 4: The Seven Mounts (Height, texture, and markings)
 Phase 5: The Micro-Marks (Dots, crosses, stars, tridents, fish, lotus)
 Phase 6: Future Projection Matrix (Material, Vital, Emotional, and Spiritual trajectories)
 Phase 7: Future Life Story (100 words)
-Phase 8: Ritual Remediation (Specific recommendations for improvement)
+Phase 8: Shadow & Exit Diagnostics (Detailed end-of-life analysis: How, When, Where)
+Phase 9: Ritual Remediation (Specific recommendations for improvement)
 
 Output Format: Use technical headings. Format the analysis content nicely in paragraphs. The response must be exhaustive.
   `;
