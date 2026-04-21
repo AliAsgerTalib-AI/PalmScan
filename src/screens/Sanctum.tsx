@@ -175,6 +175,9 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                     placeholder="00" 
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div className="group">
                   <div className="label-serif mb-2">Sex</div>
                   <select 
@@ -184,8 +187,20 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                     className="w-full bg-surface-dim border border-[#14141433] focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm appearance-none"
                   >
                     <option value="" disabled>Select</option>
-                    <option value="Feminine">Feminine</option>
-                    <option value="Masculine">Masculine</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div className="group">
+                  <div className="label-serif mb-2">Insight Level</div>
+                  <select 
+                    name="terminologyLevel"
+                    value={userData.terminologyLevel}
+                    onChange={handleInputChange}
+                    className="w-full bg-surface-dim border border-[#14141433] focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm appearance-none"
+                  >
+                    <option value="Layman">Layman</option>
+                    <option value="Expert">Expert</option>
                   </select>
                 </div>
               </div>

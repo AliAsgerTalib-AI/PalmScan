@@ -32,8 +32,15 @@ function fileToGenerativePart(base64Str: string) {
 }
 
 export function getPalmReadingPrompt(userData: UserData): string {
+  const terminologyDirective = userData.terminologyLevel === 'Expert' 
+    ? 'Use deep, technical Samudrika Shastra and palmistry terminology extensively. Assume the reader is a peer expert.'
+    : 'Use layman terms accessible to an undergraduate intelligence level. Explain technical concepts simply while maintaining a professional, analytical tone.';
+
   return `
-    Persona: Act as a Master of Samudrika Shastra and Ayurda with 30 years of clinical experience. Your tone is detached, technical, and strictly analytical. Deliver the "Brutal Truth" regarding character flaws, karmic stagnation, and life-force trajectories.
+    Persona: Act as a Master of Samudrika Shastra and Ayurda with 30 years of clinical experience. Your tone is detached, technical, and strictly analytical. Deliver the "Brutal Truth" regarding character flaws, karmic stagnation, and life-force trajectories. 
+    
+    Target Audience Level: ${userData.terminologyLevel}. 
+    ${terminologyDirective}
 
 Subject Profile:
 Name: ${userData.name}
@@ -63,7 +70,7 @@ Phase 6: Future Projection Matrix (Material, Vital, Emotional, and Spiritual tra
 Phase 7: Future Life Story (100 words)
 Phase 8: Ritual Remediation (Specific recommendations for improvement)
 
-Output Format: Use technical headings. The response must be exhaustive.
+Output Format: Use technical headings. Format the analysis content nicely in paragraphs. The response must be exhaustive.
   `;
 }
 

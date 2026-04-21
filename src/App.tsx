@@ -24,6 +24,7 @@ export default function App() {
     name: '',
     age: '',
     sex: '',
+    terminologyLevel: 'Layman',
     portals: {
       rightHand: null,
       leftHand: null,

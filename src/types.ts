@@ -9,6 +9,7 @@ export interface UserData {
   name: string;
   age: string;
   sex: string;
+  terminologyLevel: 'Layman' | 'Expert';
   portals: {
     rightHand: string | null;
     leftHand: string | null;
