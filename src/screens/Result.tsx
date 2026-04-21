@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Download, Hexagon } from "lucide-react";
+import { Download, Hexagon, Shield, Book, Palette, Sparkles, Coins } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { UserData, PalmReading } from "../types";
 // @ts-ignore
@@ -14,12 +14,66 @@ import html2pdf from "html2pdf.js";
 interface ResultProps {
   userData: UserData;
   analysisResult: PalmReading | null;
+  error: string | null;
 }
 
-export default function Result({ userData, analysisResult }: ResultProps) {
+const THEMES = {
+  WARRIOR: {
+    accent: '#EF4444',
+    bg: '#FFFFFF',
+    paper: '#FDF2F2',
+    ink: '#141414',
+    icon: 'Shield',
+    label: 'Martial Vector'
+  },
+  SCHOLAR: {
+    accent: '#3B82F6',
+    bg: '#FFFFFF',
+    paper: '#F0F7FF',
+    ink: '#141414',
+    icon: 'Book',
+    label: 'Intellectual Vector'
+  },
+  ARTIST: {
+    accent: '#D946EF',
+    bg: '#FFFFFF',
+    paper: '#FDF4FF',
+    ink: '#141414',
+    icon: 'Palette',
+    label: 'Creative Vector'
+  },
+  MYSTIC: {
+    accent: '#8B5CF6',
+    bg: '#FFFFFF',
+    paper: '#F5F3FF',
+    ink: '#141414',
+    icon: 'Sparkles',
+    label: 'Etheric Vector'
+  },
+  MERCANTILE: {
+    accent: '#10B981',
+    bg: '#FFFFFF',
+    paper: '#ECFDF5',
+    ink: '#141414',
+    icon: 'Coins',
+    label: 'Material Vector'
+  }
+} as const;
+
+export default function Result({ userData, analysisResult, error }: ResultProps) {
   const [reading, setReading] = useState<PalmReading | null>(analysisResult);
-  const [loading, setLoading] = useState(!analysisResult);
+  const [loading, setLoading] = useState(!analysisResult && !error);
   const [printStatus, setPrintStatus] = useState<string | null>(null);
+
+  const theme = reading ? THEMES[reading.archetype] : THEMES.SCHOLAR;
+
+  const ArchetypeIcon = {
+    WARRIOR: Shield,
+    SCHOLAR: Book,
+    ARTIST: Palette,
+    MYSTIC: Sparkles,
+    MERCANTILE: Coins
+  }[reading?.archetype || 'SCHOLAR'];
 
   useEffect(() => {
     if (analysisResult) {
@@ -27,6 +81,12 @@ export default function Result({ userData, analysisResult }: ResultProps) {
       setLoading(false);
     }
   }, [analysisResult]);
+
+  useEffect(() => {
+    if (error) {
+      setLoading(false);
+    }
+  }, [error]);
 
   const handlePrint = async () => {
     if (!reading) return;
@@ -76,7 +136,7 @@ export default function Result({ userData, analysisResult }: ResultProps) {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="w-32 h-32 border border-border rounded-full flex items-center justify-center overflow-hidden"
+            className="w-32 h-32 border border-[#14141433] rounded-full flex items-center justify-center overflow-hidden"
           >
             <div className="absolute inset-0 bg-[conic-gradient(from_0deg,#141414_0%,transparent_80%)]"></div>
           </motion.div>
@@ -90,9 +150,36 @@ export default function Result({ userData, analysisResult }: ResultProps) {
              <motion.div 
                 animate={{ x: [-200, 400] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-0 h-full bg-accent-orange w-1/3 shadow-[0_0_10px_#FB923C]"
+                className="absolute left-0 h-full bg-[#FB923C] w-1/3 shadow-[0_0_10px_#FB923C]"
              />
           </div>
+          <p className="text-[10px] font-mono text-[#14141466] uppercase tracking-[0.2em] mt-4">Consulting the Akashic Records</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || (reading && (reading.verifiedId === "INVALID_SUBJECT" || reading.verifiedId === "INPUT_ERROR"))) {
+    const isInputError = reading?.verifiedId === "INPUT_ERROR";
+    const isInvalidSubject = reading?.verifiedId === "INVALID_SUBJECT";
+    const displayError = reading?.fullReading || error || "Synthesis encountered an anomaly.";
+    
+    return (
+      <div className="flex-grow flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8 bg-[#E4E3E0] px-6">
+        <Hexagon className={`w-16 h-16 ${isInputError ? 'text-accent-orange' : 'text-[#EF4444]'} opacity-50`} />
+        <div className="space-y-4 max-w-md">
+          <h2 className={`text-3xl font-mono tracking-tighter uppercase ${isInputError ? 'text-accent-orange' : 'text-[#EF4444]'}`}>
+            {isInputError ? 'Anatomical Mismatch' : isInvalidSubject ? 'Synthesis Terminal' : 'Ritual Error'}
+          </h2>
+          <p className="font-serif italic text-lg leading-relaxed text-[#141414CC]">
+            {displayError}
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-8 px-8 py-4 bg-[#141414] text-[#FAFAFA] font-mono text-sm uppercase tracking-widest hover:bg-opacity-90 transition-all"
+          >
+            {isInputError ? 'Re-align Portals' : 'Reconnect to Void'}
+          </button>
         </div>
       </div>
     );
@@ -109,11 +196,17 @@ export default function Result({ userData, analysisResult }: ResultProps) {
         className="relative mb-12 border border-[#141414] p-8 bg-[#FFFFFF] flex flex-col md:flex-row justify-between items-end gap-8"
       >
         <div className="text-left">
-          
-          <h1 className="text-4xl md:text-5xl font-mono tracking-tighter uppercase leading-none">The Destiny <span className="text-[#22C55E]">Output</span></h1>
+          <div className="flex items-center gap-2 mb-2">
+             <ArchetypeIcon className="w-5 h-5" style={{ color: theme.accent }} />
+             <span className="font-mono text-[10px] tracking-[0.2em] font-bold" style={{ color: theme.accent }}>{theme.label}</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-mono tracking-tighter uppercase leading-none">The Destiny <span style={{ color: theme.accent }}>Output</span></h1>
         </div>
         <div className="flex gap-12 text-left font-mono">
-           
+           <div>
+              <div className="label-serif mb-1">Archetype</div>
+              <div className="text-sm font-bold uppercase" style={{ color: theme.accent }}>{reading.archetype}</div>
+           </div>
            <div>
               <div className="label-serif mb-1">Registry</div>
               <div className="text-sm font-bold uppercase">{reading.verifiedId}</div>
@@ -125,7 +218,7 @@ export default function Result({ userData, analysisResult }: ResultProps) {
       </motion.div>
 
       {/* Simplified, Unified Analysis "Textbox" */}
-      <div id="print-area" className="relative border border-[#141414] bg-[#FFFFFF] overflow-hidden print:shadow-none print:border-none print:m-0 print:p-0">
+      <div id="print-area" className="relative border border-[#141414] bg-[#FFFFFF] overflow-hidden print:shadow-none print:border-none print:m-0 print:p-0" style={{ backgroundColor: theme.paper }}>
         {/* Decorative Corner Ornaments */}
         <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-[#14141433] pointer-events-none" />
         <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[#14141433] pointer-events-none" />
@@ -147,28 +240,31 @@ export default function Result({ userData, analysisResult }: ResultProps) {
             <div className="prose max-w-none 
               prose-headings:font-mono prose-headings:tracking-widest prose-headings:uppercase prose-headings:text-[#141414]
               prose-h2:text-2xl prose-h2:border-b prose-h2:border-[#1414141a] prose-h2:pb-6 prose-h2:mt-16 prose-h2:mb-8
+              prose-h3:text-lg prose-h3:font-mono prose-h3:tracking-widest prose-h3:mt-10 prose-h3:mb-4 prose-h3:border-l-2 prose-h3:pl-4
               prose-p:text-xl prose-p:font-serif prose-p:italic prose-p:leading-relaxed prose-p:text-[#141414]
-              prose-strong:text-[#FB923C] prose-strong:font-bold prose-strong:px-1 prose-strong:bg-[#FB923C0D]
+              prose-strong:font-bold prose-strong:px-1
               prose-ul:list-square prose-li:font-serif prose-li:text-lg
-              prose-blockquote:border-l-4 prose-blockquote:border-[#FB923C] prose-blockquote:bg-[#FAFAFA] prose-blockquote:p-6 prose-blockquote:italic
+              prose-blockquote:border-l-4 prose-blockquote:bg-[#FAFAFA] prose-blockquote:p-6 prose-blockquote:italic
             " style={{
               ["--tw-prose-body" as any]: '#141414',
               ["--tw-prose-headings" as any]: '#141414',
               ["--tw-prose-lead" as any]: '#141414',
-              ["--tw-prose-links" as any]: '#141414',
-              ["--tw-prose-bold" as any]: '#141414',
+              ["--tw-prose-links" as any]: theme.accent,
+              ["--tw-prose-bold" as any]: theme.accent,
               ["--tw-prose-counters" as any]: '#141414',
-              ["--tw-prose-bullets" as any]: '#141414',
+              ["--tw-prose-bullets" as any]: theme.accent,
               ["--tw-prose-hr" as any]: '#141414',
               ["--tw-prose-quotes" as any]: '#141414',
-              ["--tw-prose-quote-borders" as any]: '#FB923C',
+              ["--tw-prose-quote-borders" as any]: theme.accent,
               ["--tw-prose-captions" as any]: '#141414',
               ["--tw-prose-code" as any]: '#141414',
               ["--tw-prose-pre-code" as any]: '#FAFAFA',
               ["--tw-prose-pre-bg" as any]: '#141414',
               ["--tw-prose-th-borders" as any]: '#141414',
               ["--tw-prose-td-borders" as any]: '#141414',
-            }}>
+              ["--tw-prose-h3" as any]: theme.accent,
+              ["--tw-prose-h3-border" as any]: theme.accent,
+            } as any}>
               {/* Unified Analysis Body with Markdown support */}
               <div className="markdown-body space-y-8 px-4">
                 {reading.fullReading ? (
@@ -206,7 +302,7 @@ export default function Result({ userData, analysisResult }: ResultProps) {
            >
              <div className="absolute inset-0 bg-[#FFFFFF0D] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
              {printStatus ? (
-               <Hexagon className="w-5 h-5 animate-spin text-accent-orange" />
+               <Hexagon className="w-5 h-5 animate-spin" style={{ color: theme.accent }} />
              ) : (
                <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
              )}

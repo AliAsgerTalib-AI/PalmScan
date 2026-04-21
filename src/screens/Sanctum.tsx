@@ -29,8 +29,8 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
       img.src = base64Str;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 1200;
+        const MAX_WIDTH = 1000;
+        const MAX_HEIGHT = 1000;
         let width = img.width;
         let height = img.height;
 
@@ -128,7 +128,8 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
 
   const isComplete = userData.name && userData.age && userData.sex && 
     userData.portals.rightHand && userData.portals.leftHand && 
-    userData.portals.rightPercussion && userData.portals.leftPercussion;
+    userData.portals.rightPercussion && userData.portals.leftPercussion &&
+    userData.portals.rightWrist && userData.portals.leftWrist;
 
   const handleAnalyze = async () => {
     if (!isComplete) return;
@@ -244,6 +245,20 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                 sub: 'Social Interaction', 
                 icon: <Scan className="w-8 h-8" />,
                 desc: 'Highlights how you project energy into the world, your external reputation, and zones of public engagement.'
+              },
+              { 
+                id: 'leftWrist' as const, 
+                label: 'Left Wrist', 
+                sub: 'Ancestral Flow', 
+                icon: <Hand className="w-8 h-8 rotate-180" />,
+                desc: 'Captures the rassettes (bracelet lines), revealing the foundation of health, longevity, and ancestral inheritance.'
+              },
+              { 
+                id: 'rightWrist' as const, 
+                label: 'Right Wrist', 
+                sub: 'Manifested Graces', 
+                icon: <Hand className="w-8 h-8 rotate-180" />,
+                desc: 'Examines the active bracelets of the wrist, indicating material stability and the structural integrity of your life path.'
               }
             ].map((p, idx) => (
               <label 

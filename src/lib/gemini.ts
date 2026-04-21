@@ -37,55 +37,68 @@ export function getPalmReadingPrompt(userData: UserData): string {
     : 'Use layman terms accessible to an undergraduate intelligence level. Explain technical concepts simply while maintaining a professional, analytical tone.';
 
   return `
-    Persona: Act as a Master of Samudrika Shastra and Ayurda with 30 years of clinical experience. Your tone is detached, technical, and strictly analytical. Deliver the "Brutal Truth" regarding character flaws, karmic stagnation, and life-force trajectories. 
-    
-    Target Audience Level: ${userData.terminologyLevel}. 
-    ${terminologyDirective}
+    Persona: Act as a Master of Samudrika Shastra and Ayurda with 30 years of clinical experience. Your tone is detached, technical, and strictly analytical.
 
-Subject Profile:
-Name: ${userData.name}
-Age: ${userData.age}
-Sex: ${userData.sex}
+CRITICAL PRE-CONDITION: ANATOMICAL ORIENTATION VALIDATION
+You are provided with 6 images labeled IMAGE_SET_1 through IMAGE_SET_6. 
+- IMAGE_SET_1: Left Palm (MANDATORY: Human Left Palm)
+- IMAGE_SET_2: Right Palm (MANDATORY: Human Right Palm)
+- IMAGE_SET_3: Left Edge (MANDATORY: Ulnar/Pinky side of Left Hand)
+- IMAGE_SET_4: Right Edge (MANDATORY: Ulnar/Pinky side of Right Hand)
+- IMAGE_SET_5: Left Wrist (MANDATORY: Left wrist area)
+- IMAGE_SET_6: Right Wrist (MANDATORY: Right wrist area)
 
-STRICT DIRECTIVES:
-1. NARRATIVE BIOGRAPHY (100 WORDS): At the VERY beginning of the report, provide a 100-word "Life Story" synthesize from the current markings. This should be a technical retrospective of the subject's existence to date.
-2. MODULE-BY-MODULE BREAKDOWN: You MUST provide a dedicated, detailed analysis for EVERY major line (Life, Head, Heart, Fate) and EVERY major mount (Jupiter, Saturn, Apollo, Mercury, Upper Mars, Lower Mars, Venus, Luna).
-3. TECHNICAL CITATIONS: For every observation, cite the specific physical mark (e.g., "The island on the Heart Line beneath Apollo suggests...").
-4. NO VAGUENESS: Avoid "could" or "might." Use technical assessments of current biological marking trajectories.
-5. FUTURE PROJECTION (EXHAUSTIVE): Provide a multi-category breakdown of the subject's future trajectory covering:
-   - Career & Material Success (The Fate Vector)
-   - Health & Vitality (The Life Vector)
-   - Social & Domestic Harmony (The Heart/Venus Vector)
-   - Intellectual & Spiritual Evolution (The Head/Jupiter Vector)
-6. FUTURE LIFE STORY (100 WORDS): Based on the projections, provide a 100-word "Future Narrative" describing the likely culmination of the subject's path.
-7. REMEDIATION RECOMMENDATIONS: Provide a specific section titled "Ritual Remediation" recommending exactly what the person can do (actions, habits, environmental shifts) to improve on the weaknesses identified in their readings.
-8. SHADOW & EXIT DIAGNOSTICS: Provide a specific, highly detailed section on the likely conclusion of the subject's physical existence. Based on the termination of the Life Line (Ayush Rekha) and surrounding percussion marks, specify HOW the life force will likely dissipate (cause/manner), approximately WHEN (timeframe/age), and the environmental context (WHERE/nature of the end). Use the "Brutal Truth" tone.
+STRICT ORIENTATION CHECK:
+1. Compare IMAGE_SET_1 and IMAGE_SET_2. If they are swapped (IMAGE_SET_1 is a right hand), or if they are the same hand, this is a CRITICAL ERROR.
+2. If ANY orientation mismatch is detected, you MUST immediately return JSON with verifiedId: "INPUT_ERROR".
+3. In this case, populate 'fullReading' with: "Input Error: Anatomical orientation mismatch detected. The requested portal ([Label]) does not match the provided biological specimen. Re-alignment is mandatory."
+4. Leave other fields (synthesis, career, etc.) as empty strings "".
 
-Analysis Modules:
-Phase 1: Narrative Biography (100 words)
-Phase 2: Structural Architecture (Hand Shape, Fingertip Geometry, Thumb Ratios)
-Phase 3: The Lines (Exhaustive detail on Pitru, Matru, Ayush, and Dhan Rekhas)
-Phase 4: The Seven Mounts (Height, texture, and markings)
-Phase 5: The Micro-Marks (Dots, crosses, stars, tridents, fish, lotus)
-Phase 6: Future Projection Matrix (Material, Vital, Emotional, and Spiritual trajectories)
-Phase 7: Future Life Story (100 words)
-Phase 8: Shadow & Exit Diagnostics (Detailed end-of-life analysis: How, When, Where)
-Phase 9: Ritual Remediation (Specific recommendations for improvement)
+If orientation is valid, provide the full analysis:
+- ARCHETYPE: Based on the dominance of the mounts and the shape of the hand, categorize the subject into ONE of these archetypes: 'WARRIOR' (Mars/Jupiter dominance), 'SCHOLAR' (Mercury/Jupiter dominance), 'ARTIST' (Apollo/Luna dominance), 'MYSTIC' (Saturn/Luna dominance), 'MERCANTILE' (Mercury/Venus dominance).
+- Phase 1: Narrative Biography (100 words in one cohesive paragraph)
+Phase 2: Structural Architecture (paragraph)
+Phase 3: The Lines (Exhaustive detail). For this section, you MUST use level 3 Markdown headers (###) to create separate, clearly labeled sections for each major line:
+   - ### Heart Line (Hridaya Rekha)
+   - ### Head Line (Matru Rekha)
+   - ### Life Line (Ayush Rekha)
+   - ### Fate Line (Dhan Rekha/Bhagya Rekha)
+   Analyze each line in deep, technical paragraphs focusing on forks, breaks, islands, and directional shifts.
+   Analyze the Lines as a full set.
+Phase 4: The Seven Mounts (strictly in paragraphs)
+Phase 5: The Micro-Marks (strictly in paragraphs)
+Phase 6: The Rassettes (Wrist analysis, strictly in paragraphs)
+Phase 7: Future Projection Matrix (Material, Vital, Emotional, and Spiritual - in paragraphs)
+Phase 8: Future Life Story (300 words in one paragraph)
+Phase 9: Shadow & Exit Diagnostics (Detailed end-of-life analysis: How, When, Where, Why  - in paragraphs)
+Phase 10: Ritual Remediation (Specific recommendations - in paragraphs)
 
-Output Format: Use technical headings. Format the analysis content nicely in paragraphs. The response must be exhaustive.
+Target Audience Level: ${userData.terminologyLevel}. 
+${terminologyDirective}
+
+Output Format: Strictly JSON following the schema. Use technical headings within 'fullReading'. Use ONLY paragraphs Each Paragraph starts on a new Line. Leave A Blank Line between each Phase Output.
   `;
 }
 
 export async function generatePalmReading(userData: UserData): Promise<PalmReading> {
-  const portalImages = [
-    userData.portals.rightHand,
-    userData.portals.leftHand,
-    userData.portals.rightPercussion,
-    userData.portals.leftPercussion
-  ].filter((img): img is string => !!img);
+  const parts: any[] = [{ text: getPalmReadingPrompt(userData) }];
 
-  const imageParts = portalImages.map(fileToGenerativePart);
-  const prompt = getPalmReadingPrompt(userData);
+  const mapping = [
+    { key: 'leftHand', label: 'IMAGE_SET_1: Left Palm' },
+    { key: 'rightHand', label: 'IMAGE_SET_2: Right Palm' },
+    { key: 'leftPercussion', label: 'IMAGE_SET_3: Left Edge' },
+    { key: 'rightPercussion', label: 'IMAGE_SET_4: Right Edge' },
+    { key: 'leftWrist', label: 'IMAGE_SET_5: Left Wrist' },
+    { key: 'rightWrist', label: 'IMAGE_SET_6: Right Wrist' }
+  ] as const;
+
+  mapping.forEach(m => {
+    const imageData = userData.portals[m.key];
+    if (imageData) {
+      parts.push({ text: m.label });
+      parts.push(fileToGenerativePart(imageData));
+    }
+  });
 
   try {
     const ai = getAI();
@@ -93,7 +106,7 @@ export async function generatePalmReading(userData: UserData): Promise<PalmReadi
     const response = await ai.models.generateContent({
       model,
       contents: {
-        parts: [{ text: prompt }, ...imageParts]
+        parts
       },
       config: {
         responseMimeType: "application/json",
@@ -116,16 +129,30 @@ export async function generatePalmReading(userData: UserData): Promise<PalmReadi
               required: ["synthesis", "career", "harmony", "spirit"],
             },
             verifiedId: { type: Type.STRING },
+            archetype: { 
+              type: Type.STRING, 
+              enum: ['WARRIOR', 'SCHOLAR', 'ARTIST', 'MYSTIC', 'MERCANTILE'],
+              description: "The dominant destiny archetype based on palm traits." 
+            },
           },
-          required: ["fullReading", "synthesis", "career", "harmony", "spirit", "scores", "verifiedId"],
+          required: ["fullReading", "synthesis", "career", "harmony", "spirit", "scores", "verifiedId", "archetype"],
         }
       }
     });
 
-    const text = response.text || '{}';
-    // Clean potential markdown if the model doesn't strictly follow JSON config
-    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned) as PalmReading;
+    const textBody = response.text;
+    if (!textBody) {
+      throw new Error("The Akashic connection returned no data. The void remains silent.");
+    }
+
+    try {
+      // Clean potential markdown if the model doesn't strictly follow JSON config
+      const cleaned = textBody.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as PalmReading;
+    } catch (parseError) {
+      console.error("JSON Parse Error. Raw body:", textBody);
+      throw new Error("The Ritual response was malformed. The synthesis structure collapsed.");
+    }
   } catch (error) {
     console.error("Gemini Error:", error);
     throw error;

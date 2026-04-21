@@ -15,6 +15,8 @@ export interface UserData {
     leftHand: string | null;
     rightPercussion: string | null;
     leftPercussion: string | null;
+    rightWrist: string | null;
+    leftWrist: string | null;
   };
 }
 
@@ -31,6 +33,7 @@ export interface PalmReading {
   harmony: string;
   spirit: string;
   verifiedId: string;
+  archetype: 'WARRIOR' | 'SCHOLAR' | 'ARTIST' | 'MYSTIC' | 'MERCANTILE';
   fullReading: string;
   scores: ReadingScores;
 }

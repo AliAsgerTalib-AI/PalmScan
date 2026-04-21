@@ -19,6 +19,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('setup');
   const [analysisResult, setAnalysisResult] = useState<PalmReading | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [previewPrompt, setPreviewPrompt] = useState<string>('');
   const [userData, setUserData] = useState<UserData>({
     name: '',
@@ -30,22 +31,26 @@ export default function App() {
       leftHand: null,
       rightPercussion: null,
       leftPercussion: null,
+      rightWrist: null,
+      leftWrist: null,
     }
   });
 
   const executeAnalysis = async () => {
     setIsAnalyzing(true);
     setCurrentScreen('result');
+    setError(null);
+    setAnalysisResult(null);
     
     try {
       // Direct call on frontend
       const result = await generatePalmReading(userData);
       
       setAnalysisResult(result);
-    } catch (error: any) {
-      console.error(error);
-      const message = error?.message || "Mystical synthesis failed.";
-      alert(`The Ritual Encountered an Error: ${message}`);
+    } catch (err: any) {
+      console.error(err);
+      const message = err?.message || "Mystical synthesis failed. The cosmic connection was interrupted.";
+      setError(message);
     } finally {
       setIsAnalyzing(false);
     }
@@ -53,6 +58,7 @@ export default function App() {
 
   const handleNavigate = (screen: Screen) => {
     setCurrentScreen(screen);
+    setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -70,6 +76,7 @@ export default function App() {
         return <Result 
           userData={userData} 
           analysisResult={analysisResult} 
+          error={error}
         />;
       case 'contact':
         return <Contact />;
