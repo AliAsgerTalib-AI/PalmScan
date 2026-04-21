@@ -21,6 +21,29 @@
   --color-accent-red: #EF4444;
   
   --color-border: #141414;
+  
+  /* Explicitly define gray scale to avoid oklch defaults in v4 */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+  --color-neutral-950: #0a0a0a;
+
+  /* Explicitly define other scales to prevent oklch */
+  --color-green-500: #22c55e;
+  --color-orange-500: #f97316;
+  --color-red-500: #ef4444;
+  --color-blue-500: #3b82f6;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
 
   @keyframes scan {
     0% { top: 0%; opacity: 0; }
@@ -62,16 +85,19 @@
 
 @layer base {
   body {
-    @apply bg-surface text-on-surface font-sans antialiased;
+    background-color: #E4E3E0;
+    color: #141414;
+    @apply font-sans antialiased;
   }
 }
 
 .technical-border {
-  @apply border border-border;
+  border: 1px solid #141414;
 }
 
 .label-serif {
-  @apply font-serif italic text-[11px] uppercase opacity-50 tracking-wide;
+  color: #14141480; /* Explicit hex with 50% opacity */
+  @apply font-serif italic text-[11px] uppercase tracking-wide;
 }
 
 .data-mono {
@@ -95,8 +121,8 @@
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-surface;
+  background-color: #E4E3E0;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary opacity-20;
+  background-color: #14141433; /* Primary with 20% opacity */
 }

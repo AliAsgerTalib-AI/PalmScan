@@ -27,7 +27,7 @@ export default function Confirmation({ prompt, userData, onConfirm, onCancel, is
         <header className="p-4 border-b border-border bg-surface-dim flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Terminal className="w-4 h-4 text-accent-orange" />
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface/60">Presynthesis Prompt Verification</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#14141499]">Presynthesis Prompt Verification</span>
           </div>
           <button 
             onClick={onCancel}
@@ -54,9 +54,9 @@ export default function Confirmation({ prompt, userData, onConfirm, onCancel, is
             
             <div className="grid grid-cols-4 gap-2">
               {images.map((img, idx) => (
-                <div key={idx} className="aspect-square border border-border bg-neutral-900 overflow-hidden relative group">
+                <div key={idx} className="aspect-square border border-border bg-[#171717] overflow-hidden relative group">
                   <img src={img} alt="Vessel Part" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" referrerPolicy="no-referrer" />
-                  <div className="absolute inset-0 border-inset border-accent-orange/0 group-hover:border-accent-orange/20 transition-all pointer-events-none" />
+                  <div className="absolute inset-0 border-inset border-[#FB923C00] group-hover:border-[#FB923C33] transition-all pointer-events-none" />
                 </div>
               ))}
             </div>
@@ -67,8 +67,8 @@ export default function Confirmation({ prompt, userData, onConfirm, onCancel, is
             </div>
 
             <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-accent-orange/20 to-accent-blue/20 rounded opacity-50 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative p-6 bg-neutral-900 border border-neutral-800 rounded font-mono text-xs text-neutral-300 leading-relaxed overflow-x-auto whitespace-pre-wrap max-h-[40vh] custom-scrollbar selection:bg-accent-orange/30">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FB923C33] to-[#60A5FA33] rounded opacity-50 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative p-6 bg-[#171717] border border-[#262626] rounded font-mono text-xs text-[#D4D4D4] leading-relaxed overflow-x-auto whitespace-pre-wrap max-h-[40vh] custom-scrollbar selection:bg-[#FB923C4D]">
                 {prompt}
                 <motion.div 
                   animate={{ opacity: [0, 1, 0] }}
@@ -83,14 +83,14 @@ export default function Confirmation({ prompt, userData, onConfirm, onCancel, is
             <button 
               onClick={onConfirm}
               disabled={isProcessing}
-              className="flex-grow bg-primary text-white py-5 px-8 font-mono font-bold uppercase tracking-tighter text-sm hover:bg-neutral-800 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+              className="flex-grow bg-primary text-white py-5 px-8 font-mono font-bold uppercase tracking-tighter text-sm hover:bg-[#262626] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
             >
               {isProcessing ? (
                 <>
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full"
+                    className="w-4 h-4 border-2 border-[#FFFFFF33] border-t-white rounded-full"
                   />
                   Synthesizing...
                 </>
@@ -103,7 +103,7 @@ export default function Confirmation({ prompt, userData, onConfirm, onCancel, is
             </button>
             <button 
               onClick={onCancel}
-              className="py-5 px-8 border border-border font-mono font-bold uppercase tracking-tighter text-sm hover:bg-surface-dim transition-all text-on-surface/60"
+              className="py-5 px-8 border border-border font-mono font-bold uppercase tracking-tighter text-sm hover:bg-surface-dim transition-all text-[#14141499]"
               disabled={isProcessing}
             >
               Abort Routine

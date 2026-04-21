@@ -46,7 +46,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="pt-8 border-t border-border/10">
+          <div className="pt-8 border-t border-[#1414141A]">
             <p className="text-[9px] font-mono opacity-30 uppercase tracking-[0.2em] text-center">Responses typically replied within 24-48 Hours</p>
           </div>
         </div>

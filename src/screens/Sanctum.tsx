@@ -158,7 +158,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                   name="name"
                   value={userData.name}
                   onChange={handleInputChange}
-                  className="w-full bg-surface-dim border border-border/20 focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm placeholder:opacity-30" 
+                  className="w-full bg-surface-dim border border-[#14141433] focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm placeholder:opacity-30" 
                   placeholder="Designate name..." 
                 />
               </div>
@@ -171,7 +171,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                     name="age"
                     value={userData.age}
                     onChange={handleInputChange}
-                    className="w-full bg-surface-dim border border-border/20 focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm placeholder:opacity-30" 
+                    className="w-full bg-surface-dim border border-[#14141433] focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm placeholder:opacity-30" 
                     placeholder="00" 
                   />
                 </div>
@@ -181,7 +181,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                     name="sex"
                     value={userData.sex}
                     onChange={handleInputChange}
-                    className="w-full bg-surface-dim border border-border/20 focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm appearance-none"
+                    className="w-full bg-surface-dim border border-[#14141433] focus:border-primary focus:ring-0 text-on-surface py-3 px-4 transition-all font-mono text-sm appearance-none"
                   >
                     <option value="" disabled>Select</option>
                     <option value="Feminine">Feminine</option>
@@ -208,7 +208,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
             ].map((p, idx) => (
               <label 
                 key={p.id}
-                className={`group p-8 border-b md:border-b-0 md:border-r border-border hover:bg-surface-bright transition-all relative flex flex-col items-center justify-center min-h-[220px] last:border-b-0 md:last:border-r-0 cursor-pointer overflow-hidden ${userData.portals[p.id] ? 'bg-surface-bright/50' : 'bg-surface-dim'}`}
+                className={`group p-8 border-b md:border-b-0 md:border-r border-border hover:bg-surface-bright transition-all relative flex flex-col items-center justify-center min-h-[220px] last:border-b-0 md:last:border-r-0 cursor-pointer overflow-hidden ${userData.portals[p.id] ? 'bg-[#FFFFFF80]' : 'bg-surface-dim'}`}
               >
                 <input 
                   type="file" 
@@ -238,7 +238,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         transition={{ duration: 0.6 }}
                         className="absolute inset-0 bg-white z-10"
                       />
-                      <div className="absolute inset-0 bg-accent-green/10" />
+                      <div className="absolute inset-0 bg-[#22C55E1A]" />
                     </motion.div>
                     {/* Pulsing Success Border */}
                     <motion.div 
@@ -283,7 +283,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -5 }}
-                        className="text-[9px] font-mono font-bold uppercase tracking-tighter mt-4 py-1 px-3 border border-accent-red text-accent-red bg-accent-red/10 flex items-center gap-2"
+                        className="text-[9px] font-mono font-bold uppercase tracking-tighter mt-4 py-1 px-3 border border-accent-red text-accent-red bg-[#EF44441A] flex items-center gap-2"
                       >
                         <XCircle className="w-3 h-3" />
                         <span>{errors[p.id]}</span>
@@ -294,7 +294,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -5 }}
-                        className="text-[10px] font-mono font-bold uppercase tracking-tighter mt-4 py-1 px-3 border border-primary text-primary bg-primary/10 flex items-center gap-2"
+                        className="text-[10px] font-mono font-bold uppercase tracking-tighter mt-4 py-1 px-3 border border-primary text-primary bg-[#1414141A] flex items-center gap-2"
                       >
                         <Loader2 className="w-3 h-3 animate-spin" />
                         <span>Processing...</span>
@@ -306,7 +306,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         animate={{ opacity: 1 }}
                         className={`text-[10px] font-mono font-bold uppercase tracking-tighter mt-4 py-1 px-3 border transition-all flex items-center gap-2
                           ${userData.portals[p.id] 
-                            ? 'border-accent-green text-accent-green bg-accent-green/20' 
+                            ? 'border-accent-green text-accent-green bg-[#22C55E33]' 
                             : 'border-border text-primary group-hover:border-primary group-hover:bg-primary group-hover:text-white'}`}
                       >
                         {userData.portals[p.id] ? (
@@ -317,7 +317,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                         ) : (
                           <>
                             <span>Tap to scan</span>
-                            <span className="opacity-40 text-[7px] ml-1 bg-primary/10 px-1 py-0.5 rounded-sm">MAX: 2MB</span>
+                            <span className="opacity-40 text-[7px] ml-1 bg-[#1414141A] px-1 py-0.5 rounded-sm">MAX: 2MB</span>
                           </>
                         )}
                       </motion.div>
@@ -327,7 +327,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                 
                 {/* Tech scan lines animation if not captured */}
                 {!userData.portals[p.id] && (
-                  <div className="absolute inset-x-0 h-px bg-primary/20 animate-scan pointer-events-none" />
+                  <div className="absolute inset-x-0 h-px bg-[#14141433] animate-scan pointer-events-none" />
                 )}
               </label>
             ))}
@@ -337,7 +337,7 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
             <button 
               onClick={handleAnalyze}
               disabled={!isComplete}
-              className="group relative overflow-hidden bg-primary text-white font-mono text-sm font-bold py-4 px-12 uppercase tracking-tighter shadow-md hover:bg-neutral-800 transition-all flex items-center gap-4 disabled:opacity-20 disabled:cursor-not-allowed"
+              className="group relative overflow-hidden bg-primary text-white font-mono text-sm font-bold py-4 px-12 uppercase tracking-tighter shadow-md hover:bg-[#262626] transition-all flex items-center gap-4 disabled:opacity-20 disabled:cursor-not-allowed"
             >
               <span>Analyze</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

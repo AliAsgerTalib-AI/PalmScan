@@ -25,7 +25,7 @@ export default function Disclaimer({ onAccept }: DisclaimerProps) {
       
 
         <div className="p-8 md:p-12 space-y-8 font-mono text-xs leading-relaxed">
-           <header className="border-b border-border/10 pb-6 mb-6">
+           <header className="border-b border-[#1414141A] pb-6 mb-6">
               <h1 className="text-2xl font-bold tracking-tighter uppercase leading-none mb-2">
                  Legal Disclaimer & <span className="text-accent-orange">Terms of Use</span>
               </h1>
@@ -69,7 +69,7 @@ export default function Disclaimer({ onAccept }: DisclaimerProps) {
               </div>
            </section>
 
-           <div className="pt-8 border-t border-border/10 flex flex-col items-center gap-6">
+           <div className="pt-8 border-t border-[#1414141A] flex flex-col items-center gap-6">
               <div className="flex items-center gap-4 text-[9px] opacity-40 uppercase tracking-widest text-center">
                  <span>By proceeding, you acknowledge the terms</span>
               </div>
@@ -77,7 +77,7 @@ export default function Disclaimer({ onAccept }: DisclaimerProps) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onAccept}
-                className="w-full bg-primary text-white py-5 font-bold uppercase tracking-tighter hover:bg-neutral-800 transition-all flex items-center justify-center gap-4 shadow-lg group"
+                className="w-full bg-primary text-white py-5 font-bold uppercase tracking-tighter hover:bg-[#262626] transition-all flex items-center justify-center gap-4 shadow-lg group"
               >
                 <span>Authorize & Initialize</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
