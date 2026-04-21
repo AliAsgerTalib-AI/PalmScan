@@ -17,6 +17,13 @@ export interface UserData {
   };
 }
 
+export interface ReadingScores {
+  synthesis: number;
+  career: number;
+  harmony: number;
+  spirit: number;
+}
+
 export interface PalmReading {
   synthesis: string;
   career: string;
@@ -24,4 +31,5 @@ export interface PalmReading {
   spirit: string;
   verifiedId: string;
   fullReading: string;
+  scores: ReadingScores;
 }

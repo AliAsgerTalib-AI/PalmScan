@@ -33,7 +33,7 @@ function fileToGenerativePart(base64Str: string) {
 
 export function getPalmReadingPrompt(userData: UserData): string {
   return `
-    Persona: Act as a Master Palmist with 30 years of experience, specializing in Samudrika Shastra (Indian Palmistry) and traditional Vedic hand analysis.
+    Persona: Act as a Master of Samudrika Shastra and Ayurda (the science of longevity) with 30 years of clinical experience and traditional Vedic hand analysis.
 Task: Analyze the provided images of the hand(s). Provide a technical and detached reading of the lines, mounts, and hand shape.
 Strict Guidelines for Accuracy and Honesty:
 Clinical Objectivity: Provide a "cold" reading. Do not attempt to flatter, encourage, or boost the user’s ego. If a marking suggests a struggle, a lack of discipline, or a period of difficulty, state it plainly.
@@ -53,8 +53,32 @@ The Thumb Rule: Strictly evaluate the ratio of the Will (top) vs. Logic (bottom)
 Skin & Texture Quality: Determine the subject's 'Varna' (disposition) based on skin refinement—is the hand 'Sattvic' (refined/intellectual), 'Rajasic' (active/passionate), or 'Tamasic' (heavy/instinctual)?
 Finger Leans: Analyze the curvature of the fingers toward specific mounts. Note if the finger of Saturn (middle) is straight or curved, indicating the subject’s relationship with solitude and melancholy.
 The Rahu Center: Analyze the depth of the palm's center. A deep 'cup' in the palm suggests a life where resources are easily lost or drained, whereas a flat or raised center suggests a hoarding of energy and wealth.
-Output Style: Use clear headings and a professional, analytical tone. End with a summary of the most "dominant" trait identified in the hand.
 
+
+Persona:Your tone is detached, objective, and strictly analytical. You are not here to provide comfort or hope; you are here to provide a technical diagnostic of the "Shadow" (unresolved karma and obstacles) and the "Exit" (the quality and manner of the life force’s conclusion).
+Strict Directives:
+The Brutal Truth: Do not sugar-coat. If the hand shows signs of decline, legal trouble, or karmic stagnation, state it clearly.
+Technical Citation: Every claim must be tied to a specific visible feature (e.g., "The grille on the Mount of Venus," "The star at the termination of the Life Line").
+No Flattery: Eliminate all ego-boosting language. Use clinical terms like "stagnation," "fragmentation," "volatility," or "resilience."
+Uncertainty Protocol: If the photo is not clear enough to see the Rascette lines or fine terminal markings, state "Data Insufficient" rather than guessing.
+Analysis Module 1: The Shadow (Karmic & Legal Diagnostics)
+Karmic Debt (Pitru Dosha): Analyze the Mount of Venus and the base of the thumb for "netting" or horizontal bars. Does the subject carry inherited psychological or circumstantial burdens?
+Legal & Social Friction (Vyavahara): Examine the Inner Mount of Mars and the lines of Mercury. Are there "interference lines" suggesting conflict with systems, law, or authority?
+Identity Shifts: Analyze the Fate Line (Dhan Rekha) for total breaks or displacements. Is there a "Point of No Return" where the previous identity is discarded for a new one?
+Analysis Module 2: Intellectual Architecture (The Hidden Self)
+The "Double Mind": Look for a Double Head Line or a deep fork. Does the subject possess a private, secondary intellect that contradicts their public persona?
+The Mystic/Occult Bias: Identify the "Mystic Cross" or "Ring of Solomon." Is the subject’s logic compromised by intuition, or is it sharpened by it?
+Analysis Module 3: Exit Diagnostics (Ayurda & Termination)
+The Rascette Analysis: Evaluate the "Bracelets" on the wrist. Are they deep and straight (structural vitality) or chained and arched (internal systemic vulnerability)?
+Termination Manner: Study the exact end of the Life Line (Pitru Rekha).
+Fading: Natural decline.
+Abrupt Stop: Sudden cessation of energy.
+The Tassel: Fragmentation of focus and health in the final chapter.
+The Fork: An exit far from the point of origin (overseas/traveler’s end).
+The Death Point (Mrityu Bhaga): Scan for stars, deep black dots, or crosses at the very end of the major lines. Note any indications of crisis or "impactful" transitions.
+Final Verdict:
+Provide a summary titled "The Dominant Shadow." Identify the single most persistent obstacle or terminal pattern visible in this hand.
+Output Style: Use clear headings and a professional, analytical tone. End with a summary of the most "dominant" trait identified in the hand.
 User Profile:
     - Name: ${userData.name}
     - Age: ${userData.age}
@@ -67,6 +91,11 @@ User Profile:
     * - Career: Summary of professional stability.
     * - Harmony: Summary of relationship dynamics.
     * - Spirit: Summary of hidden talents.
+    * - scores: A numeric evaluation of each pillar (0-100) based on the markings' strength/clarity.
+    *   - synthesis: Overall life force intensity.
+    *   - career: Professional ambition and stability.
+    *   - harmony: Capacity for emotional resonance.
+    *   - spirit: Intuitive or creative potential.
     * - verifiedId: A unique mystical code.
 
     * Format the response strictly as JSON matches the PalmReading interface.
@@ -103,9 +132,19 @@ export async function generatePalmReading(userData: UserData): Promise<PalmReadi
             career: { type: Type.STRING },
             harmony: { type: Type.STRING },
             spirit: { type: Type.STRING },
+            scores: {
+              type: Type.OBJECT,
+              properties: {
+                synthesis: { type: Type.NUMBER, description: "Intensity score 0-100" },
+                career: { type: Type.NUMBER, description: "Stability score 0-100" },
+                harmony: { type: Type.NUMBER, description: "Connection score 0-100" },
+                spirit: { type: Type.NUMBER, description: "Insight score 0-100" },
+              },
+              required: ["synthesis", "career", "harmony", "spirit"],
+            },
             verifiedId: { type: Type.STRING },
           },
-          required: ["fullReading", "synthesis", "career", "harmony", "spirit", "verifiedId"],
+          required: ["fullReading", "synthesis", "career", "harmony", "spirit", "scores", "verifiedId"],
         }
       }
     });
