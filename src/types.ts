@@ -23,5 +23,5 @@ export interface PalmReading {
   harmony: string;
   spirit: string;
   verifiedId: string;
-  rawAnalysis?: string;
+  fullReading: string;
 }

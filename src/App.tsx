@@ -55,10 +55,7 @@ export default function App() {
       // Direct call on frontend
       const result = await generatePalmReading(userData);
       
-      setAnalysisResult({
-        ...result,
-        rawAnalysis: result.synthesis
-      });
+      setAnalysisResult(result);
     } catch (error: any) {
       console.error(error);
       // Show the specific error message to help the user identify key/network issues

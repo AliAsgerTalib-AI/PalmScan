@@ -28,6 +28,31 @@
   }
 }
 
+@media print {
+  header, footer, nav, button, .print-hidden {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+  }
+  #print-area {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .grain-overlay {
+    display: none !important;
+  }
+}
+
 @layer utilities {
   .animate-scan {
     animation: scan 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;

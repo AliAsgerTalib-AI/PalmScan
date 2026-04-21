@@ -24,6 +24,10 @@ export default function Result({ userData, analysisResult }: ResultProps) {
     }
   }, [analysisResult]);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading) {
     return (
       <div className="flex-grow flex flex-col items-center justify-center min-h-[80vh] text-center space-y-12 bg-surface">
@@ -80,47 +84,31 @@ export default function Result({ userData, analysisResult }: ResultProps) {
       </motion.div>
 
       {/* Simplified, Unified Analysis "Textbox" */}
-      <div className="border border-border bg-surface-bright shadow-2xl overflow-hidden">
+      <div id="print-area" className="border border-border bg-surface-bright shadow-2xl overflow-hidden print:shadow-none print:border-none print:m-0">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="p-8 md:p-14 selection:bg-accent-orange/10"
         >
           <div className="prose prose-neutral max-w-none prose-p:text-xl prose-p:font-serif prose-p:italic prose-p:leading-relaxed prose-p:text-on-surface">
-            {/* Synthesis Section */}
-            <div className="mb-16 pb-12 border-b border-border/10">
-              {reading.rawAnalysis ? reading.rawAnalysis.split('\n').map((line, i) => (
-                <p key={i} className="mb-6 text-on-surface">{line}</p>
-              )) : <p className="text-on-surface">{reading.synthesis}</p>}
-            </div>
-
-            {/* Categorized Paths */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 not-prose">
-              {[
-                { label: 'Foundation', content: reading.career },
-                { label: 'Shadow', content: reading.harmony },
-                { label: 'Horizon', content: reading.spirit }
-              ].map((item, i) => (
-                <div key={i} className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-accent-orange" />
-                    <span className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-40 text-on-surface">
-                      {item.label}
-                    </span>
-                  </div>
-                  <p className="font-serif italic text-lg leading-relaxed text-on-surface border-l border-border/10 pl-5">
-                    {item.content}
-                  </p>
-                </div>
-              ))}
+            {/* Unified Analysis Body */}
+            <div className="space-y-8">
+              {reading.fullReading ? reading.fullReading.split('\n').filter(l => l.trim()).map((line, i) => (
+                <p key={i} className="text-on-surface mb-4">{line}</p>
+              )) : (
+                <p className="text-on-surface mb-6">{reading.synthesis}</p>
+              )}
             </div>
           </div>
         </motion.div>
 
         {/* Action Bar integrated into the frame */}
-        <div className="border-t border-border bg-surface-dim p-8 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="border-t border-border bg-surface-dim p-8 flex flex-col md:flex-row justify-between items-center gap-8 print:hidden">
            
-           <button className="bg-primary text-white py-4 px-12 font-mono font-bold uppercase tracking-tighter text-xs hover:bg-neutral-800 transition-all flex items-center gap-3">
+           <button 
+             onClick={handlePrint}
+             className="bg-primary text-white py-4 px-12 font-mono font-bold uppercase tracking-tighter text-xs hover:bg-neutral-800 transition-all flex items-center gap-3"
+           >
              <Download className="w-4 h-4" /> Print result to PDF
            </button>
         </div>
