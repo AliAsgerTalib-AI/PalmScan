@@ -10,13 +10,16 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Disclaimer from "./screens/Disclaimer";
 import Sanctum from "./screens/Sanctum";
+import Confirmation from "./screens/Confirmation";
 import Result from "./screens/Result";
 import Contact from "./screens/Contact";
+import { generatePalmReading, getPalmReadingPrompt } from "./lib/gemini";
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('setup');
   const [analysisResult, setAnalysisResult] = useState<PalmReading | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [previewPrompt, setPreviewPrompt] = useState<string>('');
   const [userData, setUserData] = useState<UserData>({
     name: '',
     age: '',
@@ -31,28 +34,36 @@ export default function App() {
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
-    setCurrentScreen('result'); // Navigate to result screen to show loading or results
     
     try {
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+      // Direct call on frontend
+      const prompt = getPalmReadingPrompt(userData);
+      setPreviewPrompt(prompt);
+      setCurrentScreen('confirmation');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
-      if (!response.ok) throw new Error('Analysis failed');
-      
-      const data = await response.json();
-      const result = data.full;
+  const executeAnalysis = async () => {
+    setIsAnalyzing(true);
+    setCurrentScreen('result');
+    
+    try {
+      // Direct call on frontend
+      const result = await generatePalmReading(userData);
       
       setAnalysisResult({
         ...result,
-        rawAnalysis: result.synthesis // Preserve the raw text for follow-up questions
+        rawAnalysis: result.synthesis
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      // Show the specific error message to help the user identify key/network issues
+      const message = error?.message || "Mystical synthesis failed.";
+      alert(`The Ritual Encountered an Error: ${message}\n\nPlease ensure your BIOS-essence is correctly captured and your connection to the Divine (API key) is stable.`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -66,9 +77,15 @@ export default function App() {
         return <Sanctum 
           userData={userData} 
           setUserData={setUserData} 
-          onNext={() => {
-            handleAnalyze();
-          }} 
+          onNext={() => handleAnalyze()} 
+        />;
+      case 'confirmation':
+        return <Confirmation 
+          prompt={previewPrompt}
+          userData={userData}
+          onConfirm={() => executeAnalysis()}
+          onCancel={() => setCurrentScreen('setup')}
+          isProcessing={isAnalyzing}
         />;
       case 'result':
         return <Result 

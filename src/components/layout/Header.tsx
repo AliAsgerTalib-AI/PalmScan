@@ -33,7 +33,7 @@ export default function Header({ onNavigate, currentScreen }: HeaderProps) {
           >
             Sanctum
           </span>
-          <span className="opacity-40 cursor-pointer hover:opacity-100 transition-opacity">Archive</span>
+          
         </div>
      
       </nav>

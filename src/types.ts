@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type Screen = 'disclaimer' | 'setup' | 'result' | 'contact';
+export type Screen = 'disclaimer' | 'setup' | 'confirmation' | 'result' | 'contact';
 
 export interface UserData {
   name: string;
