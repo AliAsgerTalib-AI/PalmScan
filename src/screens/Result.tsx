@@ -5,7 +5,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Download, Hexagon } from "lucide-react";
+import { Download, Hexagon, Info } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { UserData, PalmReading } from "../types";
 
 interface ResultProps {
@@ -16,6 +17,7 @@ interface ResultProps {
 export default function Result({ userData, analysisResult }: ResultProps) {
   const [reading, setReading] = useState<PalmReading | null>(analysisResult);
   const [loading, setLoading] = useState(!analysisResult);
+  const [printStatus, setPrintStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (analysisResult) {
@@ -25,7 +27,11 @@ export default function Result({ userData, analysisResult }: ResultProps) {
   }, [analysisResult]);
 
   const handlePrint = () => {
-    window.print();
+    setPrintStatus("Generating document...");
+    setTimeout(() => {
+      window.print();
+      setPrintStatus(null);
+    }, 500);
   };
 
   if (loading) {
@@ -84,18 +90,18 @@ export default function Result({ userData, analysisResult }: ResultProps) {
       </motion.div>
 
       {/* Simplified, Unified Analysis "Textbox" */}
-      <div id="print-area" className="border border-border bg-surface-bright shadow-2xl overflow-hidden print:shadow-none print:border-none print:m-0">
+      <div id="print-area" className="border border-border bg-surface-bright shadow-2xl overflow-hidden print:shadow-none print:border-none print:m-0 print:p-0">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="p-8 md:p-14 selection:bg-accent-orange/10"
         >
-          <div className="prose prose-neutral max-w-none prose-p:text-xl prose-p:font-serif prose-p:italic prose-p:leading-relaxed prose-p:text-on-surface">
-            {/* Unified Analysis Body */}
-            <div className="space-y-8">
-              {reading.fullReading ? reading.fullReading.split('\n').filter(l => l.trim()).map((line, i) => (
-                <p key={i} className="text-on-surface mb-4">{line}</p>
-              )) : (
+          <div className="prose prose-neutral max-w-none prose-p:text-xl prose-p:font-serif prose-p:italic prose-p:leading-relaxed prose-p:text-on-surface prose-headings:font-mono prose-headings:tracking-tighter prose-headings:uppercase prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-strong:text-accent-orange prose-strong:font-bold">
+            {/* Unified Analysis Body with Markdown support */}
+            <div className="markdown-body">
+              {reading.fullReading ? (
+                <ReactMarkdown>{reading.fullReading}</ReactMarkdown>
+              ) : (
                 <p className="text-on-surface mb-6">{reading.synthesis}</p>
               )}
             </div>
@@ -104,12 +110,22 @@ export default function Result({ userData, analysisResult }: ResultProps) {
 
         {/* Action Bar integrated into the frame */}
         <div className="border-t border-border bg-surface-dim p-8 flex flex-col md:flex-row justify-between items-center gap-8 print:hidden">
+           <div className="flex items-center gap-2 opacity-40 text-[10px] font-mono">
+              <Info className="w-3 h-3" />
+              <span>Select "Save as PDF" as the destination</span>
+           </div>
            
            <button 
              onClick={handlePrint}
-             className="bg-primary text-white py-4 px-12 font-mono font-bold uppercase tracking-tighter text-xs hover:bg-neutral-800 transition-all flex items-center gap-3"
+             className="bg-primary text-white py-4 px-12 font-mono font-bold uppercase tracking-tighter text-xs hover:bg-neutral-800 transition-all flex items-center gap-3 disabled:opacity-50"
+             disabled={!!printStatus}
            >
-             <Download className="w-4 h-4" /> Print result to PDF
+             {printStatus ? (
+               <Hexagon className="w-4 h-4 animate-spin" />
+             ) : (
+               <Download className="w-4 h-4" />
+             )}
+             {printStatus || "Print result to PDF"}
            </button>
         </div>
       </div>

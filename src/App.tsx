@@ -32,21 +32,6 @@ export default function App() {
     }
   });
 
-  const handleAnalyze = async () => {
-    setIsAnalyzing(true);
-    
-    try {
-      // Direct call on frontend
-      const prompt = getPalmReadingPrompt(userData);
-      setPreviewPrompt(prompt);
-      setCurrentScreen('confirmation');
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   const executeAnalysis = async () => {
     setIsAnalyzing(true);
     setCurrentScreen('result');
@@ -58,12 +43,16 @@ export default function App() {
       setAnalysisResult(result);
     } catch (error: any) {
       console.error(error);
-      // Show the specific error message to help the user identify key/network issues
       const message = error?.message || "Mystical synthesis failed.";
-      alert(`The Ritual Encountered an Error: ${message}\n\nPlease ensure your BIOS-essence is correctly captured and your connection to the Divine (API key) is stable.`);
+      alert(`The Ritual Encountered an Error: ${message}`);
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleNavigate = (screen: Screen) => {
+    setCurrentScreen(screen);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const renderScreen = () => {
@@ -74,15 +63,7 @@ export default function App() {
         return <Sanctum 
           userData={userData} 
           setUserData={setUserData} 
-          onNext={() => handleAnalyze()} 
-        />;
-      case 'confirmation':
-        return <Confirmation 
-          prompt={previewPrompt}
-          userData={userData}
-          onConfirm={() => executeAnalysis()}
-          onCancel={() => setCurrentScreen('setup')}
-          isProcessing={isAnalyzing}
+          onNext={() => executeAnalysis()} 
         />;
       case 'result':
         return <Result 
@@ -92,13 +73,8 @@ export default function App() {
       case 'contact':
         return <Contact />;
       default:
-        return <Sanctum userData={userData} setUserData={setUserData} onNext={() => handleAnalyze()} />;
+        return <Sanctum userData={userData} setUserData={setUserData} onNext={() => executeAnalysis()} />;
     }
-  };
-
-  const handleNavigate = (screen: Screen) => {
-    setCurrentScreen(screen);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
