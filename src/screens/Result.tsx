@@ -7,14 +7,6 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Download, Hexagon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { 
-  Radar, 
-  RadarChart, 
-  PolarGrid, 
-  PolarAngleAxis, 
-  PolarRadiusAxis, 
-  ResponsiveContainer 
-} from 'recharts';
 import { UserData, PalmReading } from "../types";
 // @ts-ignore
 import html2pdf from "html2pdf.js";
@@ -44,50 +36,28 @@ export default function Result({ userData, analysisResult }: ResultProps) {
 
     setPrintStatus("Generating PDF...");
     
-    // PDF configuration
+    // Scroll to top to ensure capture starts from the beginning
+    window.scrollTo(0, 0);
+
     const opt = {
-      margin:       [40, 40, 40, 40] as [number, number, number, number], // px margins
+      margin:       [0.5, 0.5, 0.5, 0.5] as [number, number, number, number],
       filename:     `PalmScan_Report_${userData.name.replace(/\s+/g, '_')}.pdf`,
       image:        { type: 'jpeg' as const, quality: 0.98 },
       html2canvas:  { 
-        scale: 2, 
+        scale: 2,
         useCORS: true, 
         letterRendering: true,
-        backgroundColor: '#FFFFFF', // White background for PDF
-        logging: false
+        backgroundColor: '#FFFFFF',
+        logging: false,
+        scrollY: 0,
+        windowWidth: 800
       },
-      jsPDF:        { unit: 'px' as const, format: 'a4', orientation: 'portrait' as const }
+      jsPDF:        { unit: 'in' as const, format: 'letter', orientation: 'portrait' as const }
     };
 
     try {
-      // Creating a clone to modify styles for PDF without affecting UI
-      const clone = element.cloneNode(true) as HTMLElement;
-      clone.style.color = '#141414';
-      clone.style.backgroundColor = '#FFFFFF';
-      clone.style.width = '800px'; // Consistent width for PDF
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      clone.style.top = '0';
-      document.body.appendChild(clone);
-      
-      // Explicitly hide any elements that shouldn't be in the PDF
-      const actionBars = clone.querySelectorAll('.print-hidden');
-      actionBars.forEach(el => (el as HTMLElement).style.display = 'none');
-
-      // Force PDF text to high-contrast hex to avoid variables and clear shadows
-      const allElements = clone.querySelectorAll('*');
-      allElements.forEach(el => {
-        const style = (el as HTMLElement).style;
-        style.setProperty('--tw-shadow', '0 0 #0000', 'important');
-        style.setProperty('--tw-ring-offset-shadow', '0 0 #0000', 'important');
-        style.setProperty('--tw-ring-shadow', '0 0 #0000', 'important');
-        style.setProperty('--tw-ring-color', '#00000000', 'important');
-        style.setProperty('box-shadow', 'none', 'important');
-      });
-      
-      await html2pdf().set(opt).from(clone).save();
-
-      document.body.removeChild(clone);
+      // Use html2pdf with the element directly
+      await html2pdf().set(opt).from(element).save();
       setPrintStatus(null);
     } catch (err) {
       console.error("PDF generation failed:", err);
@@ -98,13 +68,6 @@ export default function Result({ userData, analysisResult }: ResultProps) {
       }, 1000);
     }
   };
-
-  const chartData = reading?.scores ? [
-    { subject: 'Synthesis', value: reading.scores.synthesis },
-    { subject: 'Career', value: reading.scores.career },
-    { subject: 'Harmony', value: reading.scores.harmony },
-    { subject: 'Spirit', value: reading.scores.spirit },
-  ] : [];
 
   if (loading) {
     return (
@@ -174,53 +137,7 @@ export default function Result({ userData, analysisResult }: ResultProps) {
           animate={{ opacity: 1, y: 0 }}
           className="p-8 md:p-20 selection:bg-[#FB923C]"
         >
-          {/* Spiritual Matrix Visualization */}
-          <div className="mb-20 flex flex-col items-center">
-            <div className="flex flex-col items-center mb-8">
-              <Hexagon className="w-12 h-12 text-[#FB923C33] mb-4" />
-              <div className="label-serif text-center uppercase tracking-[0.3em]">Ritual Vector Analysis</div>
-            </div>
-            
-            <div className="w-full h-[300px] md:h-[400px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                  <PolarGrid stroke="#f0f0f0" />
-                  <PolarAngleAxis 
-                    dataKey="subject" 
-                    tick={{ fill: '#666666', fontSize: 10, fontWeight: 600, fontFamily: 'monospace' }} 
-                  />
-                  <PolarRadiusAxis 
-                    angle={30} 
-                    domain={[0, 100]} 
-                    tick={false} 
-                    axisLine={false}
-                  />
-                  <Radar
-                    name="Propensity"
-                    dataKey="value"
-                    stroke="#22C55E"
-                    fill="#22C55E"
-                    fillOpacity={0.3}
-                  />
-                </RadarChart>
-              </ResponsiveContainer>
-              {/* Subtle watermark overlay for the chart */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-[#1414140D]">
-                <Hexagon className="w-64 h-64 text-[#141414] rotate-45" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mt-12 w-full max-w-2xl">
-              {chartData.map((d) => (
-                <div key={d.subject} className="flex flex-col items-center p-4 border border-[#1414140D] bg-[#FAFAFA4D]">
-                  <div className="text-[10px] font-mono text-[#14141466] uppercase mb-2 tracking-widest">{d.subject}</div>
-                  <div className="text-3xl font-mono tracking-tighter font-bold">{d.value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="border-t border-[#1414141A] pt-20">
+          <div className="border-t border-[#1414141A] pt-10">
             <div className="flex justify-between items-center mb-16 px-4">
               <div className="h-px bg-[#14141433] flex-grow mr-8" />
               <div className="label-serif">Technical Narrative</div>
@@ -270,22 +187,12 @@ export default function Result({ userData, analysisResult }: ResultProps) {
                   {new Date().toISOString().replace('T', ' ').split('.')[0]} GMT
                 </div>
                 <div className="text-[10px] font-mono text-[#22C55E] leading-tight max-w-xs">
-                  This report is a technical synthesis of visible hand geometry and skin texture patterns. Verified under Shastra Protocol v3.
+                  Disclaimer: The readings, interpretations and insights provided by PalmScan are for entertainment purposes only. 
+                  Palmistry is an interpretive art, and not an exact science.
                 </div>
               </div>
 
-              <div className="flex flex-col items-end">
-                <div className="w-48 h-12 border-b border-[#14141466] relative mb-4">
-                  <div className="absolute bottom-2 left-0 font-serif italic text-2xl text-[#1414144D] select-none">Samudrika Master</div>
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 1.5, delay: 1 }}
-                    className="absolute -bottom-[2px] left-0 h-1 bg-[#FB923C66]"
-                  />
-                </div>
-                <div className="label-serif">Ritual Signature Authenticated</div>
-              </div>
+              
             </div>
           </div>
         </motion.div>
