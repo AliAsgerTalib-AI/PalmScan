@@ -17,6 +17,7 @@ interface SanctumProps {
 export default function Sanctum({ userData, setUserData, onNext }: SanctumProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [processing, setProcessing] = useState<Record<string, boolean>>({});
+  const [activePortal, setActivePortal] = useState<string | null>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setUserData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -216,14 +217,40 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-b border-border flex-grow">
             {[
-              { id: 'rightHand' as const, label: 'Right Palm', sub: 'Active Projection', icon: <Hand className="w-8 h-8" /> },
-              { id: 'leftHand' as const, label: 'Left Palm', sub: 'Innate Potential', icon: <Hand className="w-8 h-8 rotate-y-180" /> },
-              { id: 'rightPercussion' as const, label: 'Right Edge', sub: 'Social Interaction', icon: <Scan className="w-8 h-8" /> },
-              { id: 'leftPercussion' as const, label: 'Left Edge', sub: 'Internal Dialogue', icon: <Scan className="w-8 h-8" /> }
+              { 
+                id: 'leftHand' as const, 
+                label: 'Left Palm', 
+                sub: 'Innate Potential', 
+                icon: <Hand className="w-8 h-8 rotate-y-180" />,
+                desc: 'Reveals the subconscious mind, inherited traits, and emotional blueprint. This is the hand of "Prarabdha" or destiny.'
+              },
+              { 
+                id: 'rightHand' as const, 
+                label: 'Right Palm', 
+                sub: 'Active Projection', 
+                icon: <Hand className="w-8 h-8" />,
+                desc: 'Represents the conscious self, current life choices, and physical reality. In Samudrika Shastra, this is the hand of "Karma" or active manifestation.'
+              },
+              { 
+                id: 'leftPercussion' as const, 
+                label: 'Left Edge', 
+                sub: 'Internal Dialogue', 
+                icon: <Scan className="w-8 h-8" />,
+                desc: 'Reflects your inner world, secret desires, and the depth of your intuitive connection to yourself.'
+              },
+              { 
+                id: 'rightPercussion' as const, 
+                label: 'Right Edge', 
+                sub: 'Social Interaction', 
+                icon: <Scan className="w-8 h-8" />,
+                desc: 'Highlights how you project energy into the world, your external reputation, and zones of public engagement.'
+              }
             ].map((p, idx) => (
               <label 
                 key={p.id}
-                className={`group p-8 border-b md:border-b-0 md:border-r border-border hover:bg-surface-bright transition-all relative flex flex-col items-center justify-center min-h-[220px] last:border-b-0 md:last:border-r-0 cursor-pointer overflow-hidden ${userData.portals[p.id] ? 'bg-[#FFFFFF80]' : 'bg-surface-dim'}`}
+                onMouseEnter={() => setActivePortal(p.id)}
+                onMouseLeave={() => setActivePortal(null)}
+                className={`group p-8 border-b md:border-b-0 md:border-r border-border hover:bg-surface-bright transition-all relative flex flex-col items-center justify-center min-h-[220px] last:border-b-0 md:last:border-r-0 cursor-pointer overflow-hidden ${userData.portals[p.id] ? 'bg-[#FFFFFF80]' : 'bg-surface-dim'} ${activePortal === p.id ? 'ring-2 ring-primary ring-inset z-20 shadow-xl' : ''}`}
               >
                 <input 
                   type="file" 
@@ -232,6 +259,18 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                   className="hidden" 
                   onChange={(e) => handlePortalChange(p.id, e)} 
                 />
+
+                {/* Active Highlight Overlay */}
+                <AnimatePresence>
+                  {activePortal === p.id && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-[#FB923C0D] pointer-events-none z-10"
+                    />
+                  )}
+                </AnimatePresence>
                 
                 {userData.portals[p.id] ? (
                   <>
@@ -290,6 +329,21 @@ export default function Sanctum({ userData, setUserData, onNext }: SanctumProps)
                   
                   <h3 className="text-sm font-mono font-bold uppercase mb-1">{p.label}</h3>
                   <p className="text-[9px] uppercase tracking-widest opacity-40 mb-2">{p.sub}</p>
+
+                  <AnimatePresence>
+                    {activePortal === p.id && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <p className="text-[10px] italic text-[#14141499] max-w-[200px] mt-2 leading-tight">
+                          {p.desc}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   
                   <AnimatePresence mode="wait">
                     {errors[p.id] ? (
